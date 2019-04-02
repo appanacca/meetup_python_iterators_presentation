@@ -66,7 +66,7 @@ In the axample aboves we pass an *iterable* to the iter() mlethod and we get an 
 
 # What is an iterator ?
 
-#![](iter.png)
+![](iter.png)
 
 
 ---
@@ -95,7 +95,7 @@ StopIteration
 ---
 
 # Iteration protocol
-#![](protocol.png)
+![](protocol.png)
 
 
 ---
@@ -161,4 +161,12 @@ def length():
     
 ```
 
+---
+
+things to look at 
++ https://realpython.com/python-for-loop/#the-python-for-loop
+
++ https://dbader.org/blog/python-iterators
+
++ https://python-3-patterns-idioms-test.readthedocs.io/en/latest/Iterators.html
 ---
