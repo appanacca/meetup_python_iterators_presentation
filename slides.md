@@ -15,12 +15,12 @@ we are python coders tell you C buddies to get lost !!
 
 
 
-```python {style="font-size: 8pt}
+```python {style="font-size: 11pt}
 for *var* in *iterable*:
     *statement(s)*
 ```
 
-```python
+```python {style="font-size: 11pt}
 list_of_stuff = [1, 2, 3, "toto", ("a", 7)]
 for item in list_of_stuff:
     print(item)
@@ -41,7 +41,7 @@ An object that can be used in an iteration... umhh
 An object that can be passed to the iter()... are you kidding me !?
 
 
-```python
+```python {style="font-size: 11pt}
 >>> iter('foobar')                            
 <str_iterator object at 0x036E2750>
 
@@ -64,7 +64,7 @@ In the axample aboves we pass an *iterable* to the iter() mlethod and we get an 
 
 # Get elements out of it
 
-```python
+```python {style="font-size: 11pt}
 >>> it = iter(['what', 'a', 'great', 'meetup' ])
 >>> it
 <list_iterator object at 0x7f7894892ef0>
@@ -86,13 +86,12 @@ StopIteration
 ---
 # What is an iterator ?
 
-![](iter.png)
 
 
 ---
 
 # Iteration protocol
-![](protocol.png)
+
 
 
 ---
@@ -100,7 +99,7 @@ StopIteration
 # Example
 iter() should retourn an iterator that an be the object itself
 
-```python
+```python {style="font-size: 11pt}
 class ImageDataset:
     def __init__(self, photo_directory: str):
         self.images = [os.path.join(photo_directory, img_name) for img_name in os.listdir(photo_directory)] 
@@ -125,7 +124,7 @@ class ImageDataset:
 
 # Under the scenes
 
-```python
+```python {style="font-size: 11pt}
 my_dataset = ImageDatset('~/Documents/cats')
 for item in my_dataset:
     plt.imshow(item)
@@ -133,7 +132,7 @@ for item in my_dataset:
 ```
 
 
-```python
+```python {style="font-size: 11pt}
 my_dataset = ImageDatset('~/Documents/cats')
 iterator = my_dataset.__iter__()
 while True:
@@ -157,7 +156,7 @@ How can this idiomatic iteration works
 
 Decoupling the data structure iteration from the algorithm
 
-```python
+```python {style="font-size: 11pt}
 def reduce(iterable, fun, zero_val):
     res = zero_val
     for item in iterable:
@@ -176,7 +175,7 @@ print(res)
 
 # But Mommy I am __lazy__...
 
-```python
+```python {style="font-size: 11pt}
 # it takes time and 10 int of space in memory
 def compute():
     rv = []
@@ -187,7 +186,7 @@ def compute():
 ```
 {.column}
 
-```python
+```python {style="font-size: 11pt}
 # lazy iterator class version
 class Compute:
     def __init__(self):
@@ -210,7 +209,7 @@ class Compute:
 
 # Generators 
 
-```python
+```python {style="font-size: 11pt}
 # much easier way to define a lazy iterator
 def compute():
     for i in range(10):
@@ -221,7 +220,7 @@ def compute():
 ---
 # Api design example
 
-```python
+```python {style="font-size: 11pt}
 # the tree methods are separated because the user is supposed to do something else between the 3 calls
 class Api:
     def first_computation(self):
@@ -242,7 +241,7 @@ class Api:
 {.column}
 
 
-```python
+```python {style="font-size: 11pt}
 # this generator implementation garantee you that the sequence of the functions calls are the correct ones 
 def api():
     first_computation()
@@ -259,7 +258,7 @@ def api():
 Concise syntax to filter some iterator output and/or perform some basic operation
 
 
-```python
+```python {style="font-size: 11pt}
 my_list = [1,2,3]
 
 # Generator expression -- returns a generator
@@ -284,7 +283,7 @@ for i in my_list:
 # Comprehensions mis-usage
 
 Do not use it only for it's side effects:
-```python
+```python {style="font-size: 11pt}
 [print(x) for x in seqeunce]
 ```
 
@@ -296,7 +295,7 @@ Please check out this blog:
 
 map, filter, enumerate, zip, sorted
 
-```python
+```python {style="font-size: 11pt}
 
 my_list = [1,2,3]
 
