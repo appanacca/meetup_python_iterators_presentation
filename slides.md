@@ -14,31 +14,29 @@ Speakers note to the best presentation ever
 we are python coders tell you C buddies to get lost !! 
 
 
-```python
 
+```python {style="font-size: 8pt}
+for *var* in *iterable*:
+    *statement(s)*
+```
+
+```python
 list_of_stuff = [1, 2, 3, "toto", ("a", 7)]
 for item in list_of_stuff:
     print(item)
 ```
 
-```python
-for *var* in *iterable*:
-    *statement(s)*
-```
-
 {.column}
 
-
-```python
-
-list_of_stuff = [1, 2, 3, "toto", ("a", 7)]
-for i in range(len(list_of_stuff)):
-    print(item[i])
+```c++
+for(int i = 0; i < N; i++){
+    *var* = *iterable*[i]
+}
 ```
 
 ---
 
-# What is an iterable ? 
+# What is an iterable ? interact with him
 An object that can be used in an iteration... umhh
 An object that can be passed to the iter()... are you kidding me !?
 
@@ -60,14 +58,7 @@ TypeError: 'float' object is not iterable
 
 ```
 
-In the axample aboves we pass an *iterable* to the iter() mlethod and we get an *iterator* objec
-
----
-
-# What is an iterator ?
-
-# ![](https://drive.google.com/open?id=1DBOvrMGofqqzxI_dJqPWKfaSyCHFdgYv)
-
+In the axample aboves we pass an *iterable* to the iter() mlethod and we get an *iterator* object
 
 ---
 
@@ -93,9 +84,15 @@ StopIteration
 ```
 
 ---
+# What is an iterator ?
+
+![](iter.png)
+
+
+---
 
 # Iteration protocol
-# ![](https://drive.google.com/open?id=1jgyFch8SY5cv5hocHEfIsu63oU5DMdmL)
+![](protocol.png)
 
 
 ---
@@ -129,9 +126,12 @@ class ImageDataset:
 # Under the scenes
 
 ```python
-for *var* in *iterable*:
-    *statement(s)*
+my_dataset = ImageDatset('~/Documents/cats')
+for item in my_dataset:
+    plt.imshow(item)
+    plt.show()
 ```
+
 
 ```python
 my_dataset = ImageDatset('~/Documents/cats')
@@ -253,7 +253,73 @@ def api():
     yield
 ```
 
+---
+# Generator expressions and "X" comprehensions
 
+Concise syntax to filter some iterator output and/or perform some basic operation
+
+
+```python
+my_list = [1,2,3]
+
+# Generator expression -- returns a generator
+squared_gen = (item**2 for item in my_list if item > 2)
+
+def square_gen(data):
+    for i in data:
+        if i > 2:
+            yield i**2
+
+
+# List comprehension -- returns list
+squared_list = [item**2 for item in my_list if item > 2]
+
+s_list = []
+for i in my_list:
+    if i > 2:
+        s_list.append(i**2)
+```
+
+---
+# Comprehensions mis-usage
+
+Do not use it only for it's side effects:
+```python
+[print(x) for x in seqeunce]
+```
+
+Please check out this blog:
+:heart: [links](https://treyhunner.com/2019/03/abusing-and-overusing-list-comprehensions-in-python/)
+
+---
+# Builtin iterators
+
+map, filter, enumerate, zip, sorted
+
+```python
+
+my_list = [1,2,3]
+
+m = map(lambda i: i**2, my_list) # square
+
+f= filter(lambda i: bool(i%2) , s) # filter out even numbers
+
+for j, item in [1,2,5]:
+    print("The {}th item contains: {}".format(j, item))
+
+my_tuple = ("bob", "alice", " toto")
+for item_l, item_t in zip(my_list, my_tuple):
+    ...
+```
+
+--- 
+# Itertools
+
+The  module  itertools  is  a  collection  of  very  powerful—and  care‐fully  designed—functions  for  performing  iterator  algebra. 
+
+[itertools](https://docs.python.org/3.6/library/itertools.html)
+[more-itertools](https://github.com/erikrose/more-itertools)
+[toolz](https://toolz.readthedocs.io/en/latest/#)
 
 ---
 
@@ -266,4 +332,3 @@ things to look at
 
 + https://python-3-patterns-idioms-test.readthedocs.io/en/latest/Iterators.html
 
----

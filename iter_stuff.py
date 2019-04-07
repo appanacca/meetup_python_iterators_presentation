@@ -15,10 +15,7 @@ from typing import Tuple
 from typing import Type
 from typing import TypeVar
 from typing import Union
-_N = TypeVar('_N', int, float)
-_T = TypeVar('_T')
-_T1 = TypeVar('_T1')
-_T2 = TypeVar('_T2')
+
 
 @time_it
 def lazy_int(n=0):
@@ -70,7 +67,7 @@ tail = partial(drop, 1)
 def iterate(f, x) -> Iterator:
     return accumulate(repeat(x), lambda fx, _: f(fx))  # the lambda takes 2 inputs but it only uses the first
 
-def iterate_2(f, x: _T1) -> Generator[_T1, Any, Any]:
+def iterate_2(f, x):
     yield x
     yield from iterate_2(f, f(x))
 
