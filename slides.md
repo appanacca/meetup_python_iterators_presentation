@@ -1,6 +1,6 @@
 ---
 
-# Decortors and Iterators in the wild
+# Decorators and Iterators in the wild
 
 ## Thibault Ducret & Nicola Luminari
 
@@ -10,17 +10,15 @@ Speakers note to the best presentation ever
 
 ---
 
-# Collection-Based for loop 
-we are python coders tell you C buddies to get lost !! 
+# Collection-Based loop 
+Pas d'initialisation d'index, check des bords ou increment.
 
-
-
-```python {style="font-size: 11pt}
+```python {style="font-size: 12pt}
 for *var* in *iterable*:
     *statement(s)*
 ```
 
-```python {style="font-size: 11pt}
+```python {style="font-size: 12pt}
 list_of_stuff = [1, 2, 3, "toto", ("a", 7)]
 for item in list_of_stuff:
     print(item)
@@ -36,20 +34,15 @@ for(int i = 0; i < N; i++){
 
 ---
 
-# What is an iterable ? interact with him
-An object that can be used in an iteration... umhh
-An object that can be passed to the iter()... are you kidding me !?
+# Iterator et iterable ? 
+Un *iterable* représente n'importe quel objet sur lequel on peut iterer avec un for loop
 
-
-```python {style="font-size: 11pt}
+```python {style="font-size: 10pt}
 >>> iter('foobar')                            
 <str_iterator object at 0x036E2750>
 
 >>> iter(['foo', 'bar', 'baz'])              
 <list_iterator object at 0x036E27D0>
-
->>> iter(('foo', 'bar', 'baz'))               
-<tuple_iterator object at 0x036E27F0>
 
 >>> iter(4.2)                                 
 Traceback (most recent call last):
@@ -57,14 +50,13 @@ Traceback (most recent call last):
 TypeError: 'float' object is not iterable
 
 ```
-
-In the axample aboves we pass an *iterable* to the iter() mlethod and we get an *iterator* object
+Dans ces exemples on passe un *iterable* à la méthode iter() qui nous donne un objet *iterator*.
 
 ---
 
 # Get elements out of it
 
-```python {style="font-size: 11pt}
+```python {style="font-size: 12pt}
 >>> it = iter(['what', 'a', 'great', 'meetup' ])
 >>> it
 <list_iterator object at 0x7f7894892ef0>
@@ -84,28 +76,34 @@ StopIteration
 ```
 
 ---
-# What is an iterator ?
-
-
-
----
 
 # Iteration protocol
 
+Depuis la doc officielle de Python:
 
+The iterator objects themselves are required to support the following two methods, which together form the iterator protocol:
+
+```python {style="font-size: 12pt}
+iterator.__iter__()
+```
+Return the iterator object itself. This is required to allow both containers and iterators to be used with the for and in statements...
+
+```python {style="font-size: 12pt}
+iterator.__next__()
+```
+Return the next item from the container. If there are no further items, raise the StopIteration exception...
 
 ---
 
-# Example
-iter() should retourn an iterator that an be the object itself
+# Exemple
 
-```python {style="font-size: 11pt}
+```python {style="font-size: 10pt}
 class ImageDataset:
     def __init__(self, photo_directory: str):
         self.images = [os.path.join(photo_directory, img_name) for img_name in os.listdir(photo_directory)] 
+        self.n = 0
 
     def __iter__(self):
-         self.n = 0
         return self
     
     def __next__(self):
@@ -124,70 +122,73 @@ class ImageDataset:
 
 # Under the scenes
 
-```python {style="font-size: 11pt}
+```python {style="font-size: 10pt}
 my_dataset = ImageDatset('~/Documents/cats')
 for item in my_dataset:
     plt.imshow(item)
     plt.show()
 ```
 
-
-```python {style="font-size: 11pt}
+```python {style="font-size: 10pt}
 my_dataset = ImageDatset('~/Documents/cats')
 iterator = my_dataset.__iter__()
-while True:
-    item = iterator.__next__()
-    plt.imshow(item)
-    plt.show()
+loop_finish = False
+while not loop_finish:
+    try:
+        item = iterator.__next__()
+    except StopIteration:
+        loop_finish = True
+    else:
+        plt.imshow(item)
+        plt.show()
 ```
 
-
+<!--
 + the for loop call the method iter() on the *iterable* object getting an iterator
 + the next() method is called on the iterator getting the *var*
-+ repeat next() till _StopIteration_ and exit the for loop
-
-<!--
-How can this idiomatic iteration works 
++ repeat next() till _StopIteration_ is raised and exit the for loop
 -->
 
 ---
 
-# Why iterators ? Design pattern
+# Iterators, pourquoi ? Design pattern
 
-Decoupling the data structure iteration from the algorithm
+Séparer la structure des données de l'iteration algorithmique 
 
-```python {style="font-size: 11pt}
+```python {style="font-size: 12pt}
 def reduce(iterable, fun, zero_val):
     res = zero_val
     for item in iterable:
         res = fun(res, item)
 
-l = [1, 2, 3]
-res = reduce(l, add, 10)
-print(res)
+my_int_list = [1, 2, 3]
+res = reduce(my_int_list, add, 10)
+>> 16
 
-s = "world !"
-res = reduce(s, add, "Hello ")
-print(res)
+my_iterable_string = "chat !"
+res = reduce(my_iterable_string, add, "J'aime le ")
+>> "J'aime le chat!"
 ```
 
 ---
 
-# But Mommy I am __lazy__...
+# Mommy I am __lazy__ !
 
 ```python {style="font-size: 11pt}
-# it takes time and 10 int of space in memory
+# 10 int en memoire et 5 sec d'attente
 def compute():
     rv = []
     for i in range(10):
         sleep(.5)
         rv.append(i)
     return rv
+
+>> results = compute()
 ```
 {.column}
 
 ```python {style="font-size: 11pt}
-# lazy iterator class version
+# version lazy iterator 
 class Compute:
     def __init__(self):
         self.value = 0
@@ -203,24 +204,59 @@ class Compute:
         else:
             sleep(.5)
             return rv
+
+>> algo = Compute()
+>> for i in algo:
+    res = i  # do something with it
 ```
 
 ---
 
 # Generators 
 
-```python {style="font-size: 11pt}
-# much easier way to define a lazy iterator
+```python {style="font-size: 10pt}
+# un meilleur moyen de definir un lazy iterator
 def compute():
     for i in range(10):
         sleep(.5)
         yield i
+
+
+>> for i in compute:
+    res = i  # do something with it
 ```
+
+{.column}
+
+```python {style="font-size: 10pt}
+class Compute:
+    def __init__(self):
+        self.value = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        rv = self.value
+        self.value += 1
+        if self.value > 10:
+            raise StopIteration
+        else:
+            sleep(.5)
+            return rv
+
+>> algo = Compute()
+>> for i in algo:
+    res = i  # do something with it
+```
+
+
+
 
 ---
 # Api design example
 
-```python {style="font-size: 11pt}
+```python {style="font-size: 10pt}
 # the tree methods are separated because the user is supposed to do something else between the 3 calls
 class Api:
     def first_computation(self):
@@ -241,7 +277,7 @@ class Api:
 {.column}
 
 
-```python {style="font-size: 11pt}
+```python {style="font-size: 10pt}
 # this generator implementation garantee you that the sequence of the functions calls are the correct ones 
 def api():
     first_computation()
@@ -253,12 +289,9 @@ def api():
 ```
 
 ---
-# Generator expressions and "X" comprehensions
+# Generator expressions et "X" comprehensions
 
-Concise syntax to filter some iterator output and/or perform some basic operation
-
-
-```python {style="font-size: 11pt}
+```python {style="font-size: 10pt}
 my_list = [1,2,3]
 
 # Generator expression -- returns a generator
@@ -268,7 +301,6 @@ def square_gen(data):
     for i in data:
         if i > 2:
             yield i**2
-
 
 # List comprehension -- returns list
 squared_list = [item**2 for item in my_list if item > 2]
@@ -280,30 +312,39 @@ for i in my_list:
 ```
 
 ---
-# Comprehensions mis-usage
+# Comprehensions mal-usage
 
-Do not use it only for it's side effects:
-```python {style="font-size: 11pt}
-[print(x) for x in seqeunce]
+Ne l'utilisez pas seulement pour ses effets secondaires
+```python {style="font-size: 12pt}
+[print(x) for x in sequence]
 ```
 
-Please check out this blog:
-:heart: [links](https://treyhunner.com/2019/03/abusing-and-overusing-list-comprehensions-in-python/)
+"intelligence" non trivial
+```python {style="font-size: 10pt}
+matrix = [[row * 3 + incr for incr in range(1, 4)] for row in range(4)]
+matrix_better = np.arange(12).reshape((4,3))
+```
+
+:heart: [mauvaise usages exemples](https://treyhunner.com/2019/03/abusing-and-overusing-list-comprehensions-in-python/)
 
 ---
 # Builtin iterators
 
-map, filter, enumerate, zip, sorted
+__map, filter, enumerate, zip, sorted__
 
-```python {style="font-size: 11pt}
+```python {style="font-size: 10pt}
 
 my_list = [1,2,3]
 
-m = map(lambda i: i**2, my_list) # square
+my_mapped = map(lambda i: i**2, my_list) # square
 
-f= filter(lambda i: bool(i%2) , s) # filter out even numbers
+my_mapped_v2 = (i**2 for i in my_list)
 
-for j, item in [1,2,5]:
+my_filtered = filter(lambda i: bool(i%2) , my_list) # filter out even numbers
+
+my_filtered_v2 = (i for i in my_list if bool(i%2))
+
+for j, item in enumerate([1,2,5]):
     print("The {}th item contains: {}".format(j, item))
 
 my_tuple = ("bob", "alice", " toto")
@@ -321,8 +362,8 @@ The  module  itertools  is  a  collection  of  very  powerful—and  care‐full
 [toolz](https://toolz.readthedocs.io/en/latest/#)
 
 ---
+# Pour devenir un pro !
 
-things to look at 
 + https://python-patterns.guide/gang-of-four/iterator/
 
 + https://realpython.com/python-for-loop/#the-python-for-loop
@@ -331,3 +372,8 @@ things to look at
 
 + https://python-3-patterns-idioms-test.readthedocs.io/en/latest/Iterators.html
 
++ https://www.pythonmorsels.com/resources/
+
++ https://github.com/kachayev/fn.py
+
++ https://github.com/joelgrus/stupid-itertools-tricks-pydata/blob/master/README.md
