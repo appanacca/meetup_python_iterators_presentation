@@ -27,6 +27,12 @@ def vanilla_jacobi(R, D, b, x):
 
 
 if __name__ == "__main__":
+
+    """
+    2*x + y = 11
+    x + 7*y = 13
+    """
+
     A = np.array([[2.0,1.0],[5.0,7.0]])
     b = np.array([11.0,13.0])
     x = np.array([1.0,1.0])
@@ -36,7 +42,7 @@ if __name__ == "__main__":
     R = A - np.diagflat(D)
 
     first_iter = vanilla_jacobi(R, D, b, x)
-    print(np.linalg.norm( np.dot(A,first_iter) -b ))
+    print("Error norm: {}   (it should be zero)".format(np.linalg.norm( np.dot(A,first_iter) -b )))
 
 
     functional_jacobi = partial(vanilla_jacobi, R, D, b)
@@ -45,4 +51,4 @@ if __name__ == "__main__":
     for i in range(30):
         x_sol = next(jacobi_algo)
         residual = np.dot(A, x_sol) -b
-        print(np.linalg.norm(residual))
+        print("Error norm: {}   (it should be zero)".format(np.linalg.norm(residual)))
