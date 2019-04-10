@@ -19,9 +19,14 @@ for *var* in *iterable*:
 ```
 
 ```python {style="font-size: 12pt}
-list_of_stuff = [1, 2, 3, "toto", ("a", 7)]
-for item in list_of_stuff:
-    print(item)
+>>>list_of_stuff = [1, 2, 3, "toto", ("a", 7)]
+>>>for item in list_of_stuff:
+>>>    print(item)
+1
+2
+3
+toto
+('a', 7)
 ```
 
 {.column}
@@ -35,7 +40,7 @@ for(int i = 0; i < N; i++){
 ---
 
 # Iterator et iterable ? 
-Un *iterable* représente n'importe quel objet sur lequel on peut iterer avec un for loop
+Un *iterable* représente n'importe quel objet sur lequel on peut itérer avec un for loop
 
 ```python {style="font-size: 10pt}
 >>> iter('foobar')                            
@@ -98,17 +103,18 @@ Return the next item from the container. If there are no further items, raise th
 # Exemple
 
 ```python {style="font-size: 10pt}
-class ImageDataset:
+class ImageDataset(Iterator):
     def __init__(self, photo_directory: str):
-        self.images = [os.path.join(photo_directory, img_name) for img_name in os.listdir(photo_directory)] 
-        self.n = 0
+        super().__init__()
+        self.images = [os.path.join(photo_directory, img_name) for img_name in os.listdir(photo_directory)]
 
     def __iter__(self):
+        self.n = 0
         return self
-    
+
     def __next__(self):
-        if self.n <= len(self.images):
-            img = cv.imread(self.images[self.n], 0)
+        if self.n < len(self.images):
+            img = Image.open(self.images[self.n])
             self.n += 1
             return img
         else:
@@ -123,14 +129,14 @@ class ImageDataset:
 # Under the scenes
 
 ```python {style="font-size: 10pt}
-my_dataset = ImageDatset('~/Documents/cats')
+my_dataset = ImageDataset('cats')
 for item in my_dataset:
     plt.imshow(item)
     plt.show()
 ```
 
 ```python {style="font-size: 10pt}
-my_dataset = ImageDatset('~/Documents/cats')
+my_dataset = ImageDataset('cats')
 iterator = my_dataset.__iter__()
 loop_finish = False
 while not loop_finish:
@@ -160,7 +166,10 @@ def reduce(iterable, fun, zero_val):
     res = zero_val
     for item in iterable:
         res = fun(res, item)
-
+    return res
+```
+{.column}
+```python {style="font-size: 12pt}
 my_int_list = [1, 2, 3]
 res = reduce(my_int_list, add, 10)
 >> 16
@@ -175,7 +184,7 @@ res = reduce(my_iterable_string, add, "J'aime le ")
 # Mommy I am __lazy__ !
 
 ```python {style="font-size: 11pt}
-# 10 int en memoire et 5 sec d'attente
+# 10 int en mémoire et 5 sec d'attente
 def compute():
     rv = []
     for i in range(10):
@@ -183,7 +192,7 @@ def compute():
         rv.append(i)
     return rv
 
->> results = compute()
+results = compute()
 ```
 {.column}
 
@@ -205,8 +214,8 @@ class Compute:
             sleep(.5)
             return rv
 
->> algo = Compute()
->> for i in algo:
+algo = Compute()
+for i in algo:
     res = i  # do something with it
 ```
 
@@ -215,14 +224,14 @@ class Compute:
 # Generators 
 
 ```python {style="font-size: 10pt}
-# un meilleur moyen de definir un lazy iterator
+# un meilleur moyen de définir un lazy iterator
 def compute():
     for i in range(10):
         sleep(.5)
         yield i
 
-
->> for i in compute:
+algo = compute()
+for i in compute:
     res = i  # do something with it
 ```
 
@@ -245,8 +254,8 @@ class Compute:
             sleep(.5)
             return rv
 
->> algo = Compute()
->> for i in algo:
+algo = Compute()
+for i in algo:
     res = i  # do something with it
 ```
 
@@ -254,11 +263,11 @@ class Compute:
 
 
 ---
-# Api design example
+# Class design exemple
 
 ```python {style="font-size: 10pt}
 # the tree methods are separated because the user is supposed to do something else between the 3 calls
-class Api:
+class MyGoodInterface:
     def first_computation(self):
         pass
     def second_computation(self):
@@ -279,7 +288,7 @@ class Api:
 
 ```python {style="font-size: 10pt}
 # this generator implementation garantee you that the sequence of the functions calls are the correct ones 
-def api():
+def my_good_interface():
     first_computation()
     yield
     second_computation()
@@ -325,12 +334,12 @@ matrix = [[row * 3 + incr for incr in range(1, 4)] for row in range(4)]
 matrix_better = np.arange(12).reshape((4,3))
 ```
 
-:heart: [mauvaise usages exemples](https://treyhunner.com/2019/03/abusing-and-overusing-list-comprehensions-in-python/)
+:heart: [mauvais usages exemples](https://treyhunner.com/2019/03/abusing-and-overusing-list-comprehensions-in-python/)
 
 ---
 # Builtin iterators
 
-__map, filter, enumerate, zip, sorted__
+__map__, __filter__, __enumerate__, __zip__, __sorted__
 
 ```python {style="font-size: 10pt}
 
@@ -348,18 +357,29 @@ for j, item in enumerate([1,2,5]):
     print("The {}th item contains: {}".format(j, item))
 
 my_tuple = ("bob", "alice", " toto")
-for item_l, item_t in zip(my_list, my_tuple):
+for item_l, item_t in zip(my_list, my_tuple):  # zip_longest
     ...
 ```
 
 --- 
 # Itertools
 
-The  module  itertools  is  a  collection  of  very  powerful—and  care‐fully  designed—functions  for  performing  iterator  algebra. 
+"The  module  itertools  is  a  collection  of  very  powerful and  care‐fully  designed functions  for  performing  iterator  algebra." 
 
-[itertools](https://docs.python.org/3.6/library/itertools.html)
-[more-itertools](https://github.com/erikrose/more-itertools)
-[toolz](https://toolz.readthedocs.io/en/latest/#)
++ [itertools](https://docs.python.org/3.6/library/itertools.html)
++ [more-itertools](https://github.com/erikrose/more-itertools)
++ [toolz](https://toolz.readthedocs.io/en/latest/#)
+
+---
+# Code examples 
+
+[slides examples](https://repl.it/@appanacca/general-iterators)
+
+[fibonacci](https://repl.it/@appanacca/fibonacciiterators)
+
+[jacobi](https://repl.it/@appanacca/jacobiexample)
+
+[lazy_dataset](https://repl.it/@appanacca/imagedataset)
 
 ---
 # Pour devenir un pro !

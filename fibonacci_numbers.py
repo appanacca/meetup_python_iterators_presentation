@@ -5,6 +5,7 @@ from operator import add
 
 # [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
 
+
 def fib_v1():
     a, b = 0, 1
     while True:
@@ -13,9 +14,11 @@ def fib_v1():
 
 
 def fib_v2(n):
-    if n == 0: return 1
-    if n == 1: return 1
-    return fib_v2(n-1) + fib_v2(n-2)
+    if n == 0:
+        return 1
+    if n == 1:
+        return 1
+    return fib_v2(n - 1) + fib_v2(n - 2)
 
 
 def fib_v3():
@@ -29,14 +32,15 @@ def next_fib(pair):
     x, y = pair
     return (y, x + y)
 
+
 def fib_v4():
     return (y for x, y in iterate(next_fib, (0, 1)))
 
 
 if __name__ == "__main__":
-    
+
     N = 20
-    
+
     seq = take(N, fib_v1())
 
     print(seq)
